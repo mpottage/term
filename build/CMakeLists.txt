@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.6)
+project(rogike)
+set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_COMPILER clang)
+add_executable(demo ../demo.cpp ../Term.cpp)
+target_link_libraries(demo ncursesw)
+add_definitions(-std=c++14 -Werror)
