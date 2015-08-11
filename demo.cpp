@@ -58,6 +58,11 @@ try {
     t.status_bar.add("£");
     t.status_bar.set("£","150");
     t.status_bar.set("Health","10/10",Colour::green);
+    t.status_bar.set_title("Demo");
+    for(int i=0; i<100; ++i) {
+        t.status_bar.add(std::to_string(i));
+        t.status_bar.set(std::to_string(i),"djk;lsklsldkjhgsjkhd£");
+    }
     while(true) {
         t.level_view.clear();
         t.level_view.render(test_grid);
@@ -68,17 +73,17 @@ try {
         t.level_view.render(player.x,player.y,'@',Colour::white,true);
         t.level_view.set_focus(player.x,player.y);
         t.refresh();
-        t.next_message();
         auto key = t.get_key();
-        while(t.any_messages()) {
+        while(t.messages_left()>1) {
             if(key==" " or key=="\n") {
-                t.refresh();
                 t.next_message();
+                t.refresh();
             }
             else if(key=="q")
                 break;
             key = t.get_key();
         }
+        t.next_message(); //Clear last message..
         if((key=="l" or key=="Right") and player.x<t.level_view.width()-1)
             player.x+=1;
         else if((key=="h" or key=="Left") and player.x>0)

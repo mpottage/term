@@ -62,7 +62,7 @@ void Term::refresh()
 void Term::show_message(int width)
 {
     static const std::wstring more_text = L" --More--";
-    if(any_messages()) {
+    if(not messages.empty()) {
         if(messages[0].size()+more_text.size()>width) {
             auto current_msg = messages[0];
             int max_ch = width-more_text.size();
@@ -244,18 +244,29 @@ void Status_bar::set(const std::string& name, const std::string& value,
     else
         st->value_attrib = A_NORMAL;
 }
+void Status_bar::set_title(const std::string& title)
+{
+    m_title = utf8_wchar.from_bytes(title);
+}
 void Status_bar::refresh(int x, int y, int height, int width)
 {
-    int pos = 0;
     static const std::wstring item_spacer{L"  "};
     static const std::wstring value_gap{L": "};
     move(y,x);
     clrtoeol();
+    int pos = 0;
+    if(not m_title.empty() and m_title.size()<width) {
+        pos += m_title.size()+item_spacer.size();
+        addwstr(m_title.data());
+        addwstr(item_spacer.data());
+    }
     for(const auto& stat : m_stats) {
         int new_pos = pos+stat.name.size()+value_gap.size()
             +stat.value.size()+item_spacer.size();
         if(new_pos>=width)
             break;
+        pos = new_pos;
+        //Insert text on screen.
         addwstr(stat.name.data());
         addwstr(value_gap.data());
         attron(stat.value_attrib);

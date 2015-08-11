@@ -56,6 +56,7 @@ public:
     void add(const std::string& name);
     void set(const std::string& name, const std::string& value,
             Colour value_c=Colour::normal);
+    void set_title(const std::string& title);
     void clear()
     {   m_stats.clear();  }
     void refresh(int x, int y, int height, int width);
@@ -66,6 +67,7 @@ private:
         int value_attrib;
     };
     std::vector<Stat> m_stats;
+    std::wstring m_title;
 };
 
 class Term {
@@ -79,12 +81,12 @@ public:
     //Queue a message.
     void push_message(std::string msg);
     //Are any messages queued.
-    bool any_messages() const
-    {   return messages.size()>0;   }
+    int messages_left() const
+    {   return messages.size();   }
     //Move onto the next message.
     void next_message()
     {
-        if(any_messages())
+        if(not messages.empty())
             messages.erase(messages.begin());
     }
     //Display Term to screen (includes Level_view).
