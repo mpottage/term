@@ -1,3 +1,8 @@
+//Wrapper around ncurses to simplify usage.
+//  Interally mainly std::wstring is used. This is to support unicode output
+//  (ncurses uses wchar_t for it, not char).
+//  The public API is std::string (UTF-8) to simplify usage, as the wchar_t is
+//   only needed by ncurses.
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -18,10 +23,14 @@ public:
         m_grid.resize(new_size,' ');
         m_attribs.resize(new_size,0);
     }
-    void resize_to_grid(const std::vector<std::string>& grid);
-    void render_grid(const std::vector<std::string>& grid);
-    void render_ch(int x, int y, char ch, Colour c=Colour::normal, bool
-            bold=false);
+    void resize(const std::vector<std::string>& grid);
+    void render(const std::vector<std::string>& grid);
+    void render(int x, int y, char ch, Colour c=Colour::normal,
+            bool bold=false);
+    void render(int x, int y, const std::string& ch, Colour c=Colour::normal,
+            bool bold=false);
+    void render(int x, int y, wchar_t ch, Colour c=Colour::normal,
+            bool bold=false);
     //Sets position of blinking cursor.
     void set_focus(int x, int y)
     {   focus_x = x; focus_y = y;   }
@@ -41,6 +50,24 @@ private:
     int focus_x{0}, focus_y{0};
 };
 
+class Status_bar {
+public:
+    Status_bar() = default;
+    void add(const std::string& name);
+    void set(const std::string& name, const std::string& value,
+            Colour value_c=Colour::normal);
+    void clear()
+    {   m_stats.clear();  }
+    void refresh(int x, int y, int height, int width);
+private:
+    struct Stat {
+        std::wstring name;
+        std::wstring value;
+        int value_attrib;
+    };
+    std::vector<Stat> m_stats;
+};
+
 class Term {
 public:
     Term();
@@ -50,8 +77,7 @@ public:
     Term& operator=(Term&) = delete;
     Term& operator=(Term&&) = default;
     //Queue a message.
-    void push_message(std::string msg)
-    {   messages.push_back(msg);    }
+    void push_message(std::string msg);
     //Are any messages queued.
     bool any_messages() const
     {   return messages.size()>0;   }
@@ -74,12 +100,11 @@ public:
         //The string returned by autocompleter (if it starts with the input) is
         //used as the autocompletion and returned if the user presses [ENTER].
 
-    Level_view& level_view()
-    {   return l_level_view;    }
+    Level_view level_view;
+    Status_bar status_bar;
 private:
     void show_message(int max_width);
-    std::vector<std::string> messages;
-    Level_view l_level_view;
+    std::vector<std::wstring> messages;
 };
 
 class Term_error : std::runtime_error {
