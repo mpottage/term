@@ -46,23 +46,4 @@ inline std::string at(const std::string& s, int index)
         return s.substr(j,1);
 }
 
-/*Alternative for inside loop.
-        if(c&0b10000000) {
-            if(c&0b01000000) {
-                if(c&0b00100000) {
-                    if(c&0b00010000)
-                        i += 3;
-                    else if(c&0b00001000) //Bad starting byte.
-                        return -1;
-                    else
-                        i += 2;
-                }
-                else
-                    i += 1;
-            }
-            else //Badly formed.
-                return -1;
-        }
-        i+=delta_2;
-*/
 }
