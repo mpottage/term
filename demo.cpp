@@ -28,7 +28,7 @@ void show_inventory(ui::Display& t)
     while(true) {
         t.show_changes();
         auto k = t.get_key();
-        if(k=="j" or k=="k")
+        if(k=="h" or k=="k")
             t.list_overlay().prev_page();
         else if(k=="j" or k=="l" or k=="\n")
             t.list_overlay().next_page();
@@ -78,18 +78,18 @@ try {
     t.status_bar().set_title("Demo");
     t.list_overlay().set_title("Inventory");
     t.list_overlay().push_heading("Consumables");
-    t.list_overlay().push_item("a   Old cheese");
+    t.list_overlay().push_item("a - Old cheese");
     //t.list_overlay().push_item("b   Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Morbi iaculis quam vel elit dictum, ac imperdiet lectus accumsan.", "green")
-    t.list_overlay().push_item("b   Barley",ui::Colour::brown);
+    t.list_overlay().push_item("b - Barley",ui::Colour::brown);
     t.list_overlay().push_heading("Kernel Modules");
     std::vector<std::string> itms{"ctr","ccm ","nls_iso8859_1","nls_cp437","uvcvideo","arc4"};
     for(int i=0; i<itms.size(); ++i)
         t.list_overlay().push_item(char('d'+i)+(" - "+itms[i]));
     t.list_overlay().push_heading("Weapons");
-    t.list_overlay().push_item("j   Code cutter");
+    t.list_overlay().push_item("j - Code cutter");
     t.list_overlay().push_heading("Extra");
     for(int i=0; i<15; ++i)
-        t.list_overlay().push_item("?   Unrecognised item.");
+        t.list_overlay().push_item("? - Unrecognised item.");
 
     for(int i=0; i<100; ++i) {
         t.status_bar().add(std::to_string(i));

@@ -7,14 +7,20 @@
 #include <cmath>
 using namespace ui;
 
+//Convert std::string to std::wstring.
 static std::wstring_convert<std::codecvt_utf8<wchar_t>,wchar_t> utf8_wchar;
 
+//Generate ncurses attribute for a colour.
 inline static int colour_attrib(Colour c) {
     int c_no = static_cast<int>(c);
+    //Relies on (for the first 8 colours) that the integer value of the enum is
+    //  the same as the colour pair number in ncurses.
     if(c_no<9)
         return COLOR_PAIR(c_no);
-    else
+    else if(c_no<17)
         return COLOR_PAIR(c_no-8)|A_BOLD;
+    else
+        throw ui::Exception{"ui: Unsupported colour found ("+std::to_string(c_no)+")."};
 }
 
 Display::Display()
@@ -338,6 +344,6 @@ void List_overlay::refresh(int x, int y, int height, int width)
     }
     std::wstring page_detail = L"(page "+std::to_wstring(m_page)+L" of "+
         std::to_wstring(page_count)+L")";
-    move(end_ln+1,width-1-page_detail.size());
+    move(end_screen_ln-1,width-1-page_detail.size());
     addwstr(page_detail.data());
 }
