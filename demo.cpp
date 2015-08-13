@@ -68,8 +68,7 @@ try {
     }
     //Run display.
     auto t = ui::Display();
-    t.queue_message("TestinTestinTestinTestinTestinTestinTestinTestinTestinTestinTestinTestinTestinTestinTestingggggggggggggggTesting");
-    t.queue_message("Another");
+    t.queue_message("Welcome to the demo.cpp for ui::Display.");
     t.level_view().resize(test_grid);
     t.status_bar().add("Health");
     t.status_bar().add("£");
@@ -79,7 +78,6 @@ try {
     t.list_overlay().set_title("Inventory");
     t.list_overlay().push_heading("Consumables");
     t.list_overlay().push_item("a - Old cheese");
-    //t.list_overlay().push_item("b   Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Morbi iaculis quam vel elit dictum, ac imperdiet lectus accumsan.", "green")
     t.list_overlay().push_item("b - Barley",ui::Colour::brown);
     t.list_overlay().push_heading("Kernel Modules");
     std::vector<std::string> itms{"ctr","ccm ","nls_iso8859_1","nls_cp437","uvcvideo","arc4"};
@@ -91,10 +89,6 @@ try {
     for(int i=0; i<15; ++i)
         t.list_overlay().push_item("? - Unrecognised item.");
 
-    for(int i=0; i<100; ++i) {
-        t.status_bar().add(std::to_string(i));
-        t.status_bar().set(std::to_string(i),"djk;lsklsldkjhgsjkhd£");
-    }
     while(true) {
         t.level_view().clear();
         t.level_view().render(test_grid);
