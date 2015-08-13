@@ -125,7 +125,6 @@ public:
     // All keys that produce printable output are returned as they are.
     // Escape is "Esc" and the arrow keys are "Up", "Down", "Left" and "Right".
     // Ctrl+X returns "^X".
-    // XXX: UTF-8 input is NOT handled.
     std::string get_key();
     std::string get_answer(std::string msg);
     std::string get_long_answer(std::string prompt="# ",
@@ -148,7 +147,7 @@ private:
     Status_bar m_status_bar;
 };
 
-class Exception : std::runtime_error {
+class Exception : public std::runtime_error {
 public:
     using std::runtime_error::runtime_error;
 };

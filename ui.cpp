@@ -95,7 +95,17 @@ void Display::show_message(int width)
 }
 std::string Display::get_key()
 {
+    static_assert(KEY_MIN>255, "Unable to read UTF-8 input (if any)");
     int ch = getch();
+    if(ch>127 and ch<=255) { //If part of a UTF-8 multi-byte sequence.
+        //Read UTF-8 input.
+        std::string res{static_cast<char>(ch)};
+        int mb_size = utf8::offset_next(res[0]);
+        for(int i=1; i<mb_size; ++i) {
+            res += static_cast<char>(getch());
+        }
+        return res;
+    }
     //Some special cases for neater names.
     switch(ch) {
     case '\n':
@@ -120,7 +130,8 @@ std::string Display::get_answer(std::string msg)
 {
     move(0,0);
     clrtoeol();
-    addstr(msg.data());
+    std::wstring w_msg = utf8_wchar.from_bytes(msg);
+    addwstr(w_msg.data());
     return get_key();
 }
 std::string Display::get_long_answer(std::string prompt,
@@ -141,7 +152,7 @@ std::string Display::get_long_answer(std::string prompt,
         else
             addstr(res.data());
         int ch = getch();
-        if(31<ch and ch<127) {
+        if(31<ch and ch<256) { //Goes up to 256 for UTF-8 multibyte sequences.
             res += char(ch);
             if(autocompleter) {
                 completed = autocompleter(res);
