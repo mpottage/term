@@ -15,11 +15,22 @@ enum class Colour {
     dark_grey, light_red, light_green, yellow, blue, magenta, light_blue, white
 };
 
+class Exception : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+};
+struct Bad_dimensions : Exception {
+    using Exception::Exception;
+};
+
 class Level_view {
 public:
     Level_view() = default;
     void resize(int height, int width)
     {
+        if(height<0 or width<0)
+            throw Bad_dimensions{
+                "Level_view::resize: Negative height/width supplied."};
         m_width = width;
         m_height = height;
         int new_size = m_height*m_width;
@@ -145,11 +156,6 @@ private:
     Level_view m_level_view;
     List_overlay m_list_overlay;
     Status_bar m_status_bar;
-};
-
-class Exception : public std::runtime_error {
-public:
-    using std::runtime_error::runtime_error;
 };
 
 }//End namespace ui.

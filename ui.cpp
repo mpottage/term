@@ -219,6 +219,8 @@ void Level_view::clear()
 void Level_view::refresh(int screen_min_x,
         int screen_min_y, int height, int width)
 {
+    if(screen_min_x<0 or screen_min_y<0 or height<0 or width<0)
+        throw Bad_dimensions{"Level_view::refresh: Bad dimensions supplied."};
     int start_x{0}, start_y{0};
     if(m_width>width and focus_x>width/2) {
         if(focus_x>=m_width-width/2)
@@ -274,6 +276,8 @@ void Status_bar::set_title(const std::string& title)
 }
 void Status_bar::refresh(int x, int y, int height, int width)
 {
+    if(x<0 or y<0 or height<0 or width<0)
+        throw Bad_dimensions{"Status_bar::refresh: Bad dimensions supplied."};
     static const std::wstring item_spacer{L"  "};
     static const std::wstring value_gap{L": "};
     move(y,x);
@@ -314,6 +318,9 @@ void List_overlay::set_title(const std::string& s)
 }
 void List_overlay::refresh(int x, int y, int height, int width)
 {
+    if(x<0 or y<0 or height<0 or width<0)
+        throw Bad_dimensions{"List_overlay::refresh: "
+            "Negative height/width supplied."};
     if(items.empty())
         throw ui::Exception{"List_overlay has no items to display."};
     int max_len = 0;
