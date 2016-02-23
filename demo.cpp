@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "utf8.h"
 #include <iostream>
 #include <fstream>
 
@@ -45,23 +46,28 @@ try {
     std::vector<Point> doors;
     Point player{0,0};
     //Load level.
-    std::ifstream is{"level1.txt"};
+    std::ifstream is{"demo_level.txt"};
     is.imbue(std::locale{""});
     {
         std::string ln;
-        getline(is,ln);//Drop first line.
         int y=0;
         while(getline(is,ln)) {
             test_grid.push_back(ln);
-            for(int x=0; x<ln.size(); ++x) {
-                if(ln[x]=='$')
+            int x=0;
+            for(int i=0; i<ln.size(); ++x) {
+                int offset = utf8::offset_next(ln[i]);
+                if(offset!=1)
+                    std::cout<<offset<<'\n';
+                std::string p = ln.substr(i,offset);
+                if(p=="£")
                     coins.push_back(Point{x,y});
-                else if(ln[x]=='+')
+                else if(p=="+")
                     doors.push_back(Point{x,y});
-                else if(ln[x]=='@') {
+                else if(p=="@") {
                     player = Point{x,y};
                     test_grid[y][x] = '.';
                 }
+                i += offset;
             }
             ++y;
         }
