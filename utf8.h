@@ -17,6 +17,12 @@ inline int offset_next(char ch) //ch is the start of a code point.
         throw std::runtime_error{"Badly formed UTF-8 sequence."};
 }
 
+inline bool starts_code_point(char ch) {
+    auto c = static_cast<unsigned char>(ch);
+    return c<=0x7F or (c>=0xC2 and c<=0xDF) or (c>=0xE0 and c<=0xEF)
+        or (c>=0xF0 and c<=0xF4);
+}
+
 //Returns number of code points in a UTF-8 string.
 inline size_t size(const std::string& s)
 {

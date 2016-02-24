@@ -130,6 +130,9 @@ try {
             show_inventory(t);
         else if(key==u8"£")
             t.queue_message("You have 150 coins.");
+        else if(key=="#") //Trivial example of get_long_answer.
+            t.status_bar().set_title(t.get_long_answer("# ",
+                        [](const std::string& s) {return "demo";}));
         else if(key=="q" or key=="Esc")
             break;
     }

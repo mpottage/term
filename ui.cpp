@@ -140,35 +140,49 @@ std::string Display::get_long_answer(std::string prompt,
     move(0,0);
     clrtoeol();
     addstr(prompt.data());
-    std::string res;
-    std::string completed;
+    std::string res; //Typed text.
+    std::string completed; //Autocompletion.
     while(true) {
         move(0,prompt.size());
         clrtoeol();
+        addstr(res.data());
         if(not completed.empty()) {
-            addstr(completed.data());
-            move(0,prompt.size()+res.size());
+            auto more = completed.substr(res.size());
+            attron(A_DIM); //Have the completion more faded than the typed text.
+            addstr(more.data());
+            attroff(A_DIM);
+            move(0,prompt.size()+res.size()); //Curse before the completion.
         }
-        else
-            addstr(res.data());
         int ch = getch();
-        if(31<ch and ch<256) { //Goes up to 256 for UTF-8 multibyte sequences.
-            res += char(ch);
+        if(ch==KEY_BACKSPACE or ch==KEY_DC or ch==127) {
+            //Find the start of the last code point and erase the last UTF-8
+            //code point.
+            for(int i=res.size()-1; i>=0; --i) {
+                if(utf8::starts_code_point(res[i])) {
+                    res.erase(i);
+                    break;
+                }
+            }
+            completed = "";
+        }
+        else if(ch=='\n')
+            break;
+        else if(ch=='\t')
+            res = completed;
+        else if(ch>=32 and ch<=255 and utf8::starts_code_point(ch)) {
+            //If ch starts a UTF-8 code point (and is printable), ensure we have
+            //the whole code point, then add it to the result + autocomplete.
+            res += static_cast<char>(ch);
+            auto offset = utf8::offset_next(static_cast<char>(ch));
+            for(int i=1; i<offset; ++i) //Get the rest of the code-point.
+                res += static_cast<char>(getch());
             if(autocompleter) {
                 completed = autocompleter(res);
                 if(completed.find(res)!=0)
                     completed = "";
             }
         }
-        else if(ch=='\n')
-            break;
-        else if(ch==KEY_BACKSPACE or ch==KEY_DC or ch==127) {
-            if(res.size()>0)
-                res.erase(res.size()-1);
-            completed = "";
-        }
     }
-    return res;
     return completed.empty()?res:completed;
 }
 
