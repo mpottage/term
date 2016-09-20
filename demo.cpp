@@ -56,8 +56,6 @@ try {
             int x=0;
             for(int i=0; i<ln.size(); ++x) {
                 int offset = utf8::offset_next(ln[i]);
-                if(offset!=1)
-                    std::cout<<offset<<'\n';
                 std::string p = ln.substr(i,offset);
                 if(p=="£")
                     coins.push_back(Point{x,y});
